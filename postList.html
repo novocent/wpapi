@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="wpapi">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+	<script>
+
+	// Define the `wpapi` module
+	var wpapi = angular.module('wpapi', []);
+
+	wpapi.filter('unsafe', function($sce) { return $sce.trustAsHtml; });
+
+	wpapi.controller('postList', function postList($scope, $http, $sce) {
+		$http.get('http://wpapi.dev/wp-json/wp/v2/posts').then(function(response) {
+			$scope.posts = response.data;
+		});
+	});
+	</script>
+</head>
+<body ng-controller="postList">
+	<h1>WP API</h1>
+	<ul>
+		<li ng-repeat="post in posts">
+			<h3><a href="{{post.link}}">{{post.title.rendered}}</a></h3>
+			<div ng-bind-html="post.content.rendered | unsafe">
+			</div>
+		</li>
+	</ul>
+</body>
+</html>
